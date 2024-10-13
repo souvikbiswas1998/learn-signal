@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { RxJSInteropService } from './rxjs-interop.service';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { TableComponent } from "./table/table.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, JsonPipe],
+  imports: [RouterOutlet, AsyncPipe, JsonPipe, TableComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
   count: WritableSignal<number> = signal(0);
   doubleCount: Signal<number> = computed(() => this.count() * 2);
   posts$: Observable<Object> = this.service.postsObservable;
+  posts: any = [];
 
   conditionalCount = computed(() => {
     if (this.showCount()) {
@@ -31,6 +33,7 @@ export class AppComponent implements OnInit {
 
   constructor() {
     this.effect();
+    this.posts$.subscribe(data => { this.posts = data })
   }
 
   effect() {
