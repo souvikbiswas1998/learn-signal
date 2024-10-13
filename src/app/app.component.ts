@@ -1,18 +1,24 @@
-import { Component, computed, effect, OnInit, Signal, signal, untracked, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, Signal, signal, untracked, WritableSignal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { RxJSInteropService } from './rxjs-interop.service';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, AsyncPipe, JsonPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'learn-signal';
+  service = inject(RxJSInteropService);
   showCount = signal(true);  //default WritableSignal
   count: WritableSignal<number> = signal(0);
   doubleCount: Signal<number> = computed(() => this.count() * 2);
+  posts$: Observable<Object> = this.service.postsObservable;
+
   conditionalCount = computed(() => {
     if (this.showCount()) {
       return `The count is ${this.count()}.`;
@@ -60,6 +66,9 @@ export class AppComponent implements OnInit {
     this.count.set(value);
     // this.count.update(data => value);
     console.log(this.doubleCount());
+  }
 
+  updatePost() {
+    this.service.update();
   }
 }
